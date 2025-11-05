@@ -1,0 +1,251 @@
+openapi: 3.1.1
+info:
+  title: ELR-Converter
+  description: |
+    This API provides two-way conversion between geospatial coordinates (latitude/longitude) and the Engineer's Line Reference (ELR) mileage system. It uses virtual railway centrelines derived from the NWR Track Model v2.0.
+
+    The information provided is not guaranteed to be accurate or timely. Please do not use this API for any safety-critical applications.
+
+    Contains information from Network Rail Infrastructure Limited licensed under the Open Government Licence v3.0. © Crown copyright and database rights 2025 Ordnance Survey AC0000849662.
+  version: 1.0.0
+  license:
+    name: Open Government Licence v3.0
+    url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+servers:
+  - url: /elr-converter
+    description: Development server
+tags:
+  - name: elr-converter
+    description: ELR-Converter
+paths:
+  /mileages:
+    get:
+      tags:
+        - elr-converter
+      summary: Converts geospatial coordinates to mileages
+      parameters:
+        - $ref: '#/components/parameters/id-param'
+        - $ref: '#/components/parameters/x-coordinate-param'
+        - $ref: '#/components/parameters/y-coordinate-param'
+        - $ref: '#/components/parameters/distance-param'
+        - $ref: '#/components/parameters/srs_name-param'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      tags:
+        - elr-converter
+      summary: Batch converts geospatial coordinates to mileages
+      description: 'Reads in a JSON-formatted array and runs a batch conversion of up to 1000 features.'
+      parameters:
+        - $ref: '#/components/parameters/distance-param'
+        - $ref: '#/components/parameters/srs_name-param'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/coordinate_to_mileage'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /coordinates:
+    get:
+      tags:
+        - elr-converter
+      summary: Converts mileages to geospatial coordinates
+      parameters:
+        - $ref: '#/components/parameters/elr-param'
+        - $ref: '#/components/parameters/miles-param'
+        - $ref: '#/components/parameters/chains-param'
+        - $ref: '#/components/parameters/yards-param'
+        - $ref: '#/components/parameters/kilometres-param'
+        - $ref: '#/components/parameters/metres-param'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      tags:
+        - elr-converter
+      summary: Batch converts mileages to geospatial coordinates
+      description: 'Reads in a JSON-formatted array and runs a batch conversion of up to 1000 features.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/mileage_to_coordinate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    id:
+      type: string
+      description: 'Sets an identifier for request. Returned in response.'
+    x:
+      type: number
+      description: 'Coordinate X (longitude).'
+    y:
+      type: number
+      description: 'Coordinate Y (latitude).'
+    distance:
+      type: integer
+      description: 'Search distance in metres. Controls how near the railway line must be to be included in the result.'
+      minimum: 1
+      maximum: 1000
+      default: 100
+    srs_name:
+      type: string
+      enum:
+        - 'EPSG:4326'
+        - 'EPSG:27700'
+      description: 'Coordinate system which is used in conversion.'
+      default: 'EPSG:4326'
+    elr:
+      type: string
+      description: 'Engineers Line Reference Code.'
+    miles:
+      type: integer
+      description: 'Location in miles.'
+    chains:
+      type: integer
+      description: 'Distance in chains.'
+    yards:
+      type: integer
+      description: 'Distance in yards.'
+    kilometres:
+      type: integer
+      description: 'Location in kilometres.'
+    metres:
+      type: integer
+      description: 'Distance in metres.'
+    mileage_to_coordinate:
+      type: object
+      required:
+        - elr
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        elr:
+          $ref: '#/components/schemas/elr'
+        miles:
+          $ref: '#/components/schemas/miles'
+        chains:
+          $ref: '#/components/schemas/chains'
+        yards:
+          $ref: '#/components/schemas/yards'
+        kilometres:
+          $ref: '#/components/schemas/kilometres'
+        metres:
+          $ref: '#/components/schemas/metres'
+    coordinate_to_mileage:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        x:
+          $ref: '#/components/schemas/x'
+        y:
+          $ref: '#/components/schemas/y'
+  parameters:
+    id-param:
+      name: id
+      in: query
+      required: false
+      description: 'Sets an identifier for request. Returned in response.'
+      schema:
+        $ref: '#/components/schemas/id'
+    x-coordinate-param:
+      name: x
+      in: query
+      required: true
+      description: 'Coordinate X (longitude).'
+      schema:
+        $ref: '#/components/schemas/x'
+    y-coordinate-param:
+      name: y
+      in: query
+      required: true
+      description: 'Coordinate Y (latitude).'
+      schema:
+        $ref: '#/components/schemas/y'
+    distance-param:
+      name: distance
+      in: query
+      required: false
+      description: 'Search distance in metres.'
+      schema:
+        $ref: '#/components/schemas/distance'
+    srs_name-param:
+      name: srs_name
+      in: query
+      required: false
+      description: 'Coordinate system.'
+      schema:
+        $ref: '#/components/schemas/srs_name'
+    elr-param:
+      name: elr
+      in: query
+      required: true
+      description: 'Engineers Line Reference Code.'
+      schema:
+        $ref: '#/components/schemas/elr'
+    miles-param:
+      name: miles
+      in: query
+      required: false
+      description: 'Location in miles.'
+      schema:
+        $ref: '#/components/schemas/miles'
+    chains-param:
+      name: chains
+      in: query
+      required: false
+      description: 'Distance in chains.'
+      schema:
+        $ref: '#/components/schemas/chains'
+    yards-param:
+      name: yards
+      in: query
+      required: false
+      description: 'Distance in yards.'
+      schema:
+        $ref: '#/components/schemas/yards'
+    kilometres-param:
+      name: kilometres
+      in: query
+      required: false
+      description: 'Location in kilometres.'
+      schema:
+        $ref: '#/components/schemas/kilometres'
+    metres-param:
+      name: metres
+      in: query
+      required: false
+      description: 'Distance in metres.'
+      schema:
+        $ref: '#/components/schemas/metres'
