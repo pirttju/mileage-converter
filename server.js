@@ -29,7 +29,7 @@ db.connect()
 
 // --- Express App Setup ---
 const app = express();
-const port = 3000;
+const port = process.env.EXPRESS_PORT || 3000;
 app.use(bodyParser.json());
 
 // --- Rate Limiting Setup ---
