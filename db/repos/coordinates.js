@@ -1,5 +1,3 @@
-const { ColumnSet } = require("pg-promise").helpers;
-
 class CoordinatesRepository {
   /**
    * @param {Object} db - The database connection object.
@@ -9,42 +7,30 @@ class CoordinatesRepository {
   constructor(db, sql, pgp) {
     this.db = db;
     this.sql = sql;
-    this.pgp = pgp;
+    this.pgp = pgp; // pgp is the initialized instance
 
-    // A ColumnSet defines the columns that can be passed to the database.
-    // This is crucial for security and formatting the multi-row insert.
-    this.cs = new ColumnSet(
+    // Access ColumnSet from the passed-in pgp object
+    this.cs = new pgp.helpers.ColumnSet(
       ["id", "elr", "miles", "chains", "yards", "kilometers", "metres"],
       {
-        table: { table: "input_data", schema: "public" }, // dummy table details
+        table: "input_data", // A dummy table name is sufficient
       }
     );
   }
 
   /**
-   * Batch converts an array of ELR/mileage objects to coordinates.
-   * @param {Array<Object>} data - Array of location objects.
-   * @returns {Promise<Array<Object>>} A promise that resolves to an array of converted coordinates.
+   * Finds a single coordinate by its ELR and mileage.
    */
-  async findBatch(data) {
-    // Generate the multi-row VALUES string for the query
-    const values = this.pgp.helpers.values(data, this.cs);
-
-    // Execute the query with the formatted values
-    return this.db.any(this.sql.findBatch, { values });
+  async findByElrAndMileage({ elr, target_km }) {
+    return this.db.oneOrNone(this.sql.findByElrAndMileage, { elr, target_km });
   }
 
   /**
-   * Finds a single coordinate by its ELR and mileage.
-   * The mileage MUST be pre-calculated into a single unit (km).
-   * @param {Object} params - The parameters for the query.
-   * @param {string} params.elr - The Engineer's Line Reference.
-   * @param {number} params.target_km - The target distance along the ELR in kilometers.
-   * @returns {Promise<Object|null>} A promise that resolves to the coordinate object or null if not found.
+   * Batch converts an array of ELR/mileage objects to coordinates.
    */
-  async findByElrAndMileage({ elr, target_km }) {
-    // Use oneOrNone as we expect exactly zero or one result.
-    return this.db.oneOrNone(this.sql.findByElrAndMileage, { elr, target_km });
+  async findBatch(data) {
+    const values = this.pgp.helpers.values(data, this.cs);
+    return this.db.any(this.sql.findBatch, { values });
   }
 }
 

@@ -1,5 +1,3 @@
-const { ColumnSet } = require("pg-promise").helpers;
-
 class MileagesRepository {
   /**
    * @param {Object} db - The database connection object.
@@ -9,46 +7,30 @@ class MileagesRepository {
   constructor(db, sql, pgp) {
     this.db = db;
     this.sql = sql;
-    this.pgp = pgp;
+    this.pgp = pgp; // pgp is the initialized instance
 
-    // Define the columns for the data expected by the SQL query.
-    // We map the API's 'x' and 'y' to 'lon' and 'lat'.
-    this.cs = new ColumnSet(
-      [
-        "id",
-        { name: "lon", prop: "x" }, // map property 'x' to column 'lon'
-        { name: "lat", prop: "y" }, // map property 'y' to column 'lat'
-      ],
+    // Access ColumnSet from the passed-in pgp object
+    this.cs = new pgp.helpers.ColumnSet(
+      ["id", { name: "lon", prop: "x" }, { name: "lat", prop: "y" }],
       {
-        table: { table: "input_data", schema: "public" }, // dummy table details
+        table: "input_data",
       }
     );
   }
 
   /**
-   * Batch converts an array of coordinate objects to mileages.
-   * @param {Array<Object>} data - Array of location objects, e.g., [{id, x, y}].
-   * @returns {Promise<Array<Object>>} A promise that resolves to an array of converted mileages.
-   */
-  async findBatch(data) {
-    // Generate the multi-row VALUES string.
-    // pg-promise will automatically use the mapping from the ColumnSet.
-    const values = this.pgp.helpers.values(data, this.cs);
-
-    // Execute the query
-    return this.db.any(this.sql.findBatch, { values });
-  }
-
-  /**
    * Finds mileages for a single coordinate within a given radius.
-   * @param {Object} params - The parameters for the query.
-   * @param {number} params.x - The longitude.
-   * @param {number} params.y - The latitude.
-   * @param {number} params.radius - The search radius in metres.
-   * @returns {Promise<Array<Object>>} A promise that resolves to an array of nearby mileage results.
    */
   async findByCoordinate({ x, y, radius }) {
     return this.db.any(this.sql.findByCoordinate, { lon: x, lat: y, radius });
+  }
+
+  /**
+   * Batch converts an array of coordinate objects to mileages.
+   */
+  async findBatch(data) {
+    const values = this.pgp.helpers.values(data, this.cs);
+    return this.db.any(this.sql.findBatch, { values });
   }
 }
 
