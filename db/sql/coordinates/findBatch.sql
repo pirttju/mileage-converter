@@ -7,21 +7,13 @@ inputs AS (
   FROM input_data
 )
 SELECT
-  i.id,
-  i.elr,
-  i.miles,
-  i.chains,
-  i.yards,
-  i.kilometres,
-  i.metres,
+  i.id, i.elr, i.miles, i.chains, i.yards, i.kilometres, i.metres,
   ST_X(ST_Transform(result.calculated_geom, 4326)) AS longitude,
   ST_Y(ST_Transform(result.calculated_geom, 4326)) AS latitude,
   ST_AsText(result.calculated_geom) AS point_wkt_27700
 FROM
   inputs AS i
--- LEFT JOIN ensures we get a row for every input, even if no match is found
 LEFT JOIN LATERAL (
-  -- This subquery finds the single correct segment and interpolates the point.
   SELECT
     ST_LineInterpolatePoint(
       s.geom,
@@ -32,7 +24,6 @@ LEFT JOIN LATERAL (
       END
     ) AS calculated_geom
   FROM
-    -- This internal subquery calculates the target distance once, correctly handling NULLs
     (SELECT
         CASE
           WHEN (COALESCE(i.miles, 0) + COALESCE(i.chains, 0) + COALESCE(i.yards, 0)) > 0 THEN 'imperial'
@@ -46,20 +37,33 @@ LEFT JOIN LATERAL (
     ) AS target,
     nwr_elrs_split AS s
   WHERE
-    s.elr = i.elr AND
+    s.elr = i.elr
+    AND
     CASE
-      WHEN target.unit_system = 'imperial'
-        THEN target.target_distance >= s.start_mi AND target.target_distance <= s.end_mi
-      ELSE target.target_distance >= s.start_km AND target.target_distance <= s.end_km
+      WHEN (target.unit_system = 'imperial' AND COALESCE(i.chains, 0) = 0 AND COALESCE(i.yards, 0) = 0) OR
+           (target.unit_system = 'metric' AND COALESCE(i.metres, 0) = 0)
+      THEN
+        CASE
+          WHEN target.unit_system = 'imperial'
+            THEN target.target_distance >= s.start_mi AND target.target_distance <= s.end_mi
+          ELSE target.target_distance >= s.start_km AND target.target_distance <= s.end_km
+        END
+      ELSE
+        CASE
+          WHEN target.unit_system = 'imperial' AND i.miles IS NOT NULL
+            THEN (target.target_distance >= s.start_mi AND target.target_distance <= s.end_mi) AND (floor(s.start_mi) = i.miles)
+          WHEN target.unit_system = 'metric' AND i.kilometres IS NOT NULL
+            THEN (target.target_distance >= s.start_km AND target.target_distance <= s.end_km) AND (floor(s.start_km) = i.kilometres)
+          ELSE FALSE
+        END
     END
-  -- This ORDER BY handles boundary conditions correctly
+
   ORDER BY
     CASE
       WHEN target.unit_system = 'imperial' THEN s.start_mi
       ELSE s.start_km
     END DESC
   LIMIT 1
-  -- The ON TRUE is required for LATERAL joins
 ) AS result ON TRUE
 ORDER BY
-  i.input_order
+  i.input_order;
