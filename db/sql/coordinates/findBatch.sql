@@ -51,13 +51,12 @@ LEFT JOIN LATERAL (
       ELSE
         CASE
           WHEN target.unit_system = 'imperial' AND i.miles IS NOT NULL
-            THEN (target.target_distance >= s.start_mi AND target.target_distance <= s.end_mi) AND (floor(s.start_mi) = i.miles)
+            THEN (floor(s.start_mi) = i.miles) AND (target.target_distance <= s.end_mi)
           WHEN target.unit_system = 'metric' AND i.kilometres IS NOT NULL
-            THEN (target.target_distance >= s.start_km AND target.target_distance <= s.end_km) AND (floor(s.start_km) = i.kilometres)
+            THEN (floor(s.start_km) = i.kilometres) AND (target.target_distance <= s.end_km)
           ELSE FALSE
         END
     END
-
   ORDER BY
     CASE
       WHEN target.unit_system = 'imperial' THEN s.start_mi
