@@ -65,12 +65,14 @@ paths:
         - elr-converter
       summary: Converts mileages to geospatial coordinates
       parameters:
+        - $ref: '#/components/parameters/id-param'
         - $ref: '#/components/parameters/elr-param'
         - $ref: '#/components/parameters/miles-param'
         - $ref: '#/components/parameters/chains-param'
         - $ref: '#/components/parameters/yards-param'
         - $ref: '#/components/parameters/kilometres-param'
         - $ref: '#/components/parameters/metres-param'
+        - $ref: '#/components/parameters/srs_name-param'
       responses:
         '200':
           description: OK
@@ -127,7 +129,7 @@ components:
       description: 'Engineers Line Reference Code.'
     miles:
       type: integer
-      description: 'Location in miles.'
+      description: 'Position in miles.'
     chains:
       type: integer
       description: 'Distance in chains.'
@@ -136,10 +138,10 @@ components:
       description: 'Distance in yards.'
     kilometres:
       type: integer
-      description: 'Location in kilometres.'
+      description: 'Position in kilometres.'
     metres:
       type: integer
-      description: 'Distance in metres.'
+      description: 'Distance from marker in metres.'
     mileage_to_coordinate:
       type: object
       required:
@@ -218,7 +220,7 @@ components:
       name: miles
       in: query
       required: false
-      description: 'Location in miles.'
+      description: 'Position in miles.'
       schema:
         $ref: '#/components/schemas/miles'
     chains-param:
@@ -239,7 +241,7 @@ components:
       name: kilometres
       in: query
       required: false
-      description: 'Location in kilometres.'
+      description: 'Position in kilometres.'
       schema:
         $ref: '#/components/schemas/kilometres'
     metres-param:
