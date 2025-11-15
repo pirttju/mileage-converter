@@ -2,9 +2,9 @@ openapi: 3.1.1
 info:
   title: ELR-Converter
   description: |
-    This API provides two-way conversion between geospatial coordinates (latitude/longitude) and the Engineer's Line Reference (ELR) mileage system. It uses virtual railway centrelines derived from the NWR Track Model v2.0.
+    This API provides two-way conversion between geospatial coordinates (latitude/longitude) and the Engineer's Line Reference (ELR) mileage system. It uses virtual railway centrelines derived from the NWR Track Model.
 
-    The information provided is not guaranteed to be accurate or timely. Please do not use this API for any safety-critical applications.
+    The data provided is for information only. Please do not use this API for any safety-critical applications.
 
     Contains information from Network Rail Infrastructure Limited licensed under the Open Government Licence v3.0. © Crown copyright and database rights 2025 Ordnance Survey AC0000849662.
   version: 1.0.0
