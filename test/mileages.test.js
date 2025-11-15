@@ -55,8 +55,8 @@ describe("Mileages API", () => {
       );
       // The query returns results with null ELRs for non-matches, so we check that
       // our specific 'not_found' ID did not successfully match to any line.
-      const successfulMatch = notFoundResults.find((r) => r.elr !== null);
-      expect(successfulMatch).to.be.undefined;
+      const notFoundMatch = notFoundResults.find((r) => r.elr !== null);
+      expect(notFoundMatch).to.be.undefined;
     });
 
     it("should return a 400 Bad Request if the x or y parameter is missing", async () => {
@@ -81,29 +81,26 @@ describe("Mileages API", () => {
         .send(batchPayload)
         .expect("Content-Type", /json/)
         .expect(200);
-
-      expect(response.body).to.be.an("array");
+      expect(response.body).to.be.an("array").and.not.be.empty;
 
       // Filter results for the successful input ID
-      const foundResults = response.body.filter(
-        (r) => r.input_feature_id === "found"
-      );
+      const foundResults = response.body.filter((r) => r.id === "found");
       expect(foundResults).to.not.be.empty;
 
       // Check the successful conversion within the results
       const result = foundResults.find((r) => r.elr === EXPECTED_ELR);
       expect(result).to.not.be.undefined;
       expect(result.miles).to.equal(EXPECTED_MILES);
-      expect(result.kilometers).to.equal(EXPECTED_KILOMETERS);
+      expect(result.kilometres).to.equal(EXPECTED_KILOMETRES);
 
       // Filter results for the unsuccessful input ID
-      const notFoundResults = response.body.filter(
-        (r) => r.input_feature_id === "not_found"
-      );
+      const notFoundResults = response.body.filter((r) => r.id === "not_found");
+      expect(notFoundResults).to.not.be.empty;
+
       // The query returns results with null ELRs for non-matches, so we check that
       // our specific 'not_found' ID did not successfully match to any line.
-      const successfulMatch = notFoundResults.find((r) => r.elr !== null);
-      expect(successfulMatch).to.be.undefined;
+      const notFoundMatch = notFoundResults.find((r) => r.elr !== null);
+      expect(notFoundMatch).to.be.undefined;
     });
 
     it("should return a 400 Bad Request if the payload is not an array", async () => {
