@@ -15,7 +15,7 @@ class MileagesRepository {
         { name: "id", def: null },
         { name: "lon", prop: "x", cast: "numeric" },
         { name: "lat", prop: "y", cast: "numeric" },
-        { name: "radius", def: 100, cast: "integer" },
+        { name: "distance", def: 100, cast: "integer" },
       ],
       {
         table: "input_data",
@@ -26,9 +26,9 @@ class MileagesRepository {
   /**
    * Finds mileages for a single coordinate within a given radius.
    */
-  async findByCoordinate({ x, y, radius }) {
+  async findByCoordinate({ id, x, y, distance }) {
     // Create an array with a single item and call the batch method.
-    const data = [{ x, y, radius }];
+    const data = [{ id, x, y, distance }];
     return this.findBatch(data);
   }
 

@@ -1,4 +1,4 @@
-WITH input_data (id, lon, lat, radius) AS (
+WITH input_data (id, lon, lat, distance) AS (
   VALUES
   $/values:raw/
 ),
@@ -34,7 +34,7 @@ LEFT JOIN LATERAL (
       -- Transform the current input point's geometry on the fly.
       (SELECT ST_Transform(ST_SetSRID(ST_MakePoint(i.lon, i.lat), 4326), 27700)) AS pt(input_geom)
     WHERE
-      ST_DWithin(s.geom, pt.input_geom, i.radius)
+      ST_DWithin(s.geom, pt.input_geom, i.distance)
     -- This ORDER BY is essential for the DISTINCT ON to work correctly.
     ORDER BY
       s.elr, s.geom <-> pt.input_geom

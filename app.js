@@ -67,7 +67,7 @@ app.get("/", async (req, res) => {
  * GET /mileages
  */
 app.get("/mileages", async (req, res) => {
-  const { x, y, radius } = req.query;
+  const { id, x, y, distance } = req.query;
 
   if (!x || !y) {
     return res.status(400).json({ error: "Missing required parameters: x, y" });
@@ -77,14 +77,14 @@ app.get("/mileages", async (req, res) => {
   const lat = parseFloat(y);
 
   // Use provided radius or default to 100 m, and do range checks
-  const searchRadius = parseInt(radius, 10) || 100;
+  const searchDistance = parseInt(distance, 10) || 100;
 
-  if (searchRadius > 1000) {
-    searchRadius = 1000;
+  if (searchDistance > 1000) {
+    searchDistance = 1000;
   }
 
-  if (searchRadius < 1) {
-    searchRadius = 1;
+  if (searchDistance < 1) {
+    searchDistance = 1;
   }
 
   if (isNaN(lon) || isNaN(lat)) {
@@ -93,9 +93,10 @@ app.get("/mileages", async (req, res) => {
 
   try {
     const results = await repos.mileages.findByCoordinate({
+      id: id,
       x: lon,
       y: lat,
-      radius: searchRadius,
+      distance: searchDistance,
     });
     res.json(results);
   } catch (error) {
