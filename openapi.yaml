@@ -12,7 +12,7 @@ info:
     name: Open Government Licence v3.0
     url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 servers:
-  - url: /elr-converter
+  - url: /
     description: Development server
 tags:
   - name: elr-converter
