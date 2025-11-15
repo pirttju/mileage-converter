@@ -43,7 +43,7 @@ app.use(bodyParser.json());
 // --- Rate Limiting Setup ---
 const limiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 100,
+  max: 50,
   standardHeaders: true,
   legacyHeaders: false,
   message: "Too many requests from this IP, please try again after a minute.",
@@ -58,6 +58,9 @@ swaggerRouter.get("/", swaggerUi.setup(openapiSpecification));
 app.use("/api-docs", swaggerRouter);
 
 // --- API Routes ---
+app.get("/", async (req, res) => {
+  return res.status(200).send("Hello!");
+});
 
 /**
  * Converts a geospatial location to ELRs and mileages.
