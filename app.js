@@ -236,4 +236,38 @@ app.post("/coordinates", async (req, res) => {
   }
 });
 
+/**
+ * Requests metadata containing a list of ELRs and their starting and ending points.
+ * GET /metadata
+ */
+app.get("/metadata", async (req, res) => {
+  const { elr } = req.query;
+
+  // --- VALIDATION ---
+  /*
+  if (!elr) {
+    return res.status(400).json({ error: "Missing required parameter: elr" });
+  }
+  */
+
+  try {
+    const result = await repos.metadata.findElrs();
+
+    if (result) {
+      res.json(result);
+    } else {
+      if (!elr) {
+        res.status(404).json({ error: "Metadata not found." });
+      } else {
+        res
+          .status(404)
+          .json({ error: "Metadata not found for the given ELR." });
+      }
+    }
+  } catch (error) {
+    console.error("API Error:", error);
+    res.status(500).json({ error: "An error occurred." });
+  }
+});
+
 module.exports = app;

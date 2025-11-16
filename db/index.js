@@ -4,6 +4,7 @@ const pgp = require("pg-promise")({
 
 const CoordinatesRepository = require("./repos/coordinates");
 const MileagesRepository = require("./repos/mileages");
+const MetadataRepository = require("./repos/metadata");
 
 const { QueryFile } = pgp;
 const path = require("path");
@@ -37,6 +38,13 @@ const repos = {
     db,
     {
       findBatch: sql("sql/mileages/findBatch.sql"),
+    },
+    pgp
+  ),
+  metadata: new MetadataRepository(
+    db,
+    {
+      findElrs: sql("sql/metadata/findElrs.sql"),
     },
     pgp
   ),

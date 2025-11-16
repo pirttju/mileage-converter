@@ -29,12 +29,17 @@ ogr2ogr -f PostgreSQL PG:"dbname=gis host=localhost port=5432 user=gis" NWR_Trac
 
 ## Converting Data
 
-Run sql files that convert the data:
+Run sql files that initialise the database and convert the data:
 
 ```bash
+psql -d gis -U gis -f init.sql
 psql -d gis -U gis -f split_nwr_elrs.sql
 psql -d gis -U gis -f update_nwr_elrs_split.sql
 ```
+
+## Copy Metadata
+
+Columns elr, line_name of the elr_meta table shall contain the unique ELRs and their line names. This data has been derived from the Railway Codes website (http://www.railwaycodes.org.uk/elrs/elr0.shtm) and therefore not included in this repository.
 
 # Installation
 
