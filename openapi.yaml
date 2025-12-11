@@ -17,6 +17,9 @@ servers:
 tags:
   - name: mileage-converter
     description: Mileage Conversion
+tags:
+  - name: mileage-metadata
+    description: Metadata
 paths:
   /mileages:
     get:
@@ -102,7 +105,7 @@ paths:
   /metadata:
     get:
       tags:
-        - mileage-converter
+        - mileage-metadata
       summary: List of ELRs
       description: 'Returns a list of ELRs and their starting and ending points as in the data.'
       parameters:
