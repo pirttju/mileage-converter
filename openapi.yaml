@@ -7,8 +7,6 @@ info:
     The data provided is for information only. Please do not use this API for any safety-critical applications.
 
     Contains information from Network Rail Infrastructure Limited licensed under the Open Government Licence v3.0. © Crown copyright and database rights 2025 Ordnance Survey AC0000849662.
-
-    Line names shown in the results are from the Railway Codes website (http://www.railwaycodes.org.uk/elrs/elr0.shtm).
   version: 1.0.0
   license:
     name: Open Government Licence v3.0
