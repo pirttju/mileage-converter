@@ -1,6 +1,6 @@
 openapi: 3.1.1
 info:
-  title: ELR Converter
+  title: Mileage Converter
   description: |
     This API provides two-way conversion between geospatial coordinates (latitude/longitude) and the Engineer's Line Reference (ELR) mileage system. It uses virtual railway centrelines derived from the NWR Track Model.
 
@@ -15,13 +15,13 @@ servers:
   - url: /
     description: Development server
 tags:
-  - name: elr-converter
-    description: Converter API
+  - name: mileage-converter
+    description: Mileage Conversion
 paths:
   /mileages:
     get:
       tags:
-        - elr-converter
+        - mileage-converter
       summary: Converts geospatial coordinates to mileages
       parameters:
         - $ref: '#/components/parameters/id-param'
@@ -38,7 +38,7 @@ paths:
                 type: object
     post:
       tags:
-        - elr-converter
+        - mileage-converter
       summary: Batch converts geospatial coordinates to mileages
       description: 'Reads in a JSON-formatted array and runs a batch conversion of up to 1000 features.'
       parameters:
@@ -61,7 +61,7 @@ paths:
   /coordinates:
     get:
       tags:
-        - elr-converter
+        - mileage-converter
       summary: Converts mileages to geospatial coordinates
       parameters:
         - $ref: '#/components/parameters/id-param'
@@ -81,7 +81,7 @@ paths:
                 type: object
     post:
       tags:
-        - elr-converter
+        - mileage-converter
       summary: Batch converts mileages to geospatial coordinates
       description: 'Reads in a JSON-formatted array and runs a batch conversion of up to 1000 features.'
       requestBody:
@@ -102,9 +102,9 @@ paths:
   /metadata:
     get:
       tags:
-        - elr-converter
+        - mileage-converter
       summary: List of ELRs
-      description: 'Returns a list of ELRs and their starting and ending points.'
+      description: 'Returns a list of ELRs and their starting and ending points as in the data.'
       parameters:
         - $ref: '#/components/parameters/elr-param'
       responses:
