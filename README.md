@@ -39,7 +39,7 @@ psql -d gis -U gis -f update_nwr_elrs_split.sql
 
 ## Copy Metadata
 
-Columns elr and line_name of the elr_meta table shall contain the unique ELRs and their line names. This data is derived from the Railway Codes website (http://www.railwaycodes.org.uk/elrs/elr0.shtm) and therefore not included in this repository.
+Columns elr and line_name of the elr_meta table shall contain the unique ELRs and their line names. This data can be derived from the Railway Codes website (http://www.railwaycodes.org.uk/elrs/elr0.shtm) and therefore not included in this repository.
 
 # Installation
 
