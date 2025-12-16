@@ -1,7 +1,7 @@
 {
   "name": "mileage-converter",
   "version": "1.0.2",
-  "description": "Translates between geospatial locations and mileages",
+  "description": "Translates between geospatial locations and railway mileages",
   "main": "server.js",
   "scripts": {
     "test": "mocha --recursive",
@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/pirttju/mileage-converter/issues"

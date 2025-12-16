@@ -107,8 +107,6 @@ paths:
         - metadata
       summary: List of ELRs
       description: 'Returns a list of ELRs and their starting and ending points as in the data.'
-      parameters:
-        - $ref: '#/components/parameters/elr-param'
       responses:
         '200':
           description: OK
