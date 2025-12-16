@@ -192,6 +192,8 @@ app.get("/coordinates", async (req, res) => {
     // Pass the raw query parameters directly to the repository method
     const result = await repos.coordinates.findByElrAndMileage(req.query, srid);
 
+    Object.keys(result).forEach((k) => result[k] == null && delete result[k]);
+
     if (result) {
       res.json(result);
     } else {
@@ -234,6 +236,11 @@ app.post("/coordinates", async (req, res) => {
 
   try {
     const results = await repos.coordinates.findBatch(locations, srid);
+
+    Object.keys(results).forEach(
+      (k) => results[k] == null && delete results[k]
+    );
+
     res.json(results);
   } catch (error) {
     console.error("API Error:", error);
