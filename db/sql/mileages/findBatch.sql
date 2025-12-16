@@ -24,7 +24,7 @@ SELECT
   -- Extract the decimal part of the km, multiply by 1000 for metres
   ROUND((nearby_lines.calc_km - floor(nearby_lines.calc_km)) * 1000)::integer AS metres,
   -- Physical distance from the input point to the rail line (perpendicular distance)
-  ROUND(nearby_lines.distance_to_line_in_metres) AS distance_off_line
+  ROUND(nearby_lines.distance_to_line_in_metres) AS distance_off_line,
   -- Point on the rail line
   ST_X(ST_Transform(nearby_lines.closest_geom, ${srid})) AS x,
   ST_Y(ST_Transform(nearby_lines.closest_geom, ${srid})) AS y
