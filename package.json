@@ -1,6 +1,6 @@
 {
   "name": "mileage-converter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Translates between geospatial locations and railway mileages",
   "main": "server.js",
   "scripts": {

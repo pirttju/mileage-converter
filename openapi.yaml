@@ -7,7 +7,7 @@ info:
     The data provided is for information only. Please do not use this API for any safety-critical applications.
 
     Contains information from Network Rail Infrastructure Limited licensed under the Open Government Licence v3.0. © Crown copyright and database rights 2025 Ordnance Survey AC0000849662.
-  version: 1.0.2
+  version: 1.0.3
   license:
     name: Open Government Licence v3.0
     url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/

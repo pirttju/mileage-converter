@@ -116,9 +116,9 @@ app.get("/mileages", async (req, res) => {
       res
         .status(404)
         .json({ error: "Location not found for the given coordinates." });
+    } else {
+      res.json(results);
     }
-
-    res.json(results);
   } catch (error) {
     console.error("API Error:", error);
     res.status(500).json({ error: "An error occurred during the conversion." });
