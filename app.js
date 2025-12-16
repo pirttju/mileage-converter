@@ -107,6 +107,11 @@ app.get("/mileages", async (req, res) => {
       distance: searchDistance,
       srid: srid,
     });
+
+    Object.keys(results).forEach(
+      (k) => results[k] == null && delete results[k]
+    );
+
     res.json(results);
   } catch (error) {
     console.error("API Error:", error);
@@ -143,6 +148,11 @@ app.post("/mileages", async (req, res) => {
 
   try {
     const results = await repos.mileages.findBatch(locations, srid);
+
+    Object.keys(results).forEach(
+      (k) => results[k] == null && delete results[k]
+    );
+
     res.json(results);
   } catch (error) {
     console.error("API Error:", error);
