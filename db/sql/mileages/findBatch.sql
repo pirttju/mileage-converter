@@ -18,11 +18,19 @@ SELECT
   -- Calculate the full difference from that start mile (allows values > 1760)
   ROUND((nearby_lines.calc_mi - floor(nearby_lines.start_mi)) * 1760)::integer AS yards,
 
-  -- METRIC CALCULATIONS (Anchored to Start Kilometre)
-  -- Use the segment's start km as the integer base
-  floor(nearby_lines.start_km)::integer AS kilometres,
-  -- Calculate the full difference from that start km (allows values > 1000)
-  ROUND((nearby_lines.calc_km - floor(nearby_lines.start_km)) * 1000)::integer AS metres,
+  -- METRIC CALCULATIONS
+  -- Logic: 
+  -- If 'M', we normalise (e.g., 2.2km becomes 2km, 200m).
+  -- If 'K' (or other), we anchor to the start marker (e.g., Start 1.0 + 1.2km dist becomes 1km, 1200m).
+  CASE 
+    WHEN nearby_lines.waymark_unit = 'M' THEN floor(nearby_lines.calc_km)::integer
+    ELSE floor(nearby_lines.start_km)::integer 
+  END AS kilometres,
+
+  CASE 
+    WHEN nearby_lines.waymark_unit = 'M' THEN ROUND((nearby_lines.calc_km - floor(nearby_lines.calc_km)) * 1000)::integer
+    ELSE ROUND((nearby_lines.calc_km - floor(nearby_lines.start_km)) * 1000)::integer 
+  END AS metres,
 
   -- Physical distance from the input point to the rail line (perpendicular distance)
   ROUND(nearby_lines.distance_to_line_in_metres) AS distance,
@@ -34,10 +42,11 @@ FROM
 LEFT JOIN LATERAL (
     SELECT DISTINCT ON (s.elr)
       s.elr,
+      s.waymark_unit,
       -- WE MUST SELECT THE START VALUES TO USE AS ANCHORS
       s.start_mi,
       s.start_km,
-      
+
       -- 1. Calculate the position fraction (0.0 start, 1.0 end) along the segment
       ST_LineLocatePoint(s.geom, ST_ClosestPoint(s.geom, pt.input_geom)) AS frac,
       
